@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ QuickJava - Online Java Compiler</title>
+    
+    <!-- Icons & Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.css">
+    
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #334155;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: #60a5fa;
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .logo-text h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            background: linear-gradient(90deg, #60a5fa, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        /* Control Buttons */
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: linear-gradient(135deg, #0da271, #2bc28a);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-clear {
+            background: #475569;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #64748b;
+        }
+
+        .btn-example {
+            background: transparent;
+            border: 2px solid #60a5fa;
+            color: #60a5fa;
+        }
+
+        .btn-example:hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .btn-export {
+            background: transparent;
+            border: 2px solid #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .btn-export:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Main Editor Area */
+        .editor-area {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            height: calc(100vh - 200px);
+        }
+
+        .editor-container, .output-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        /* Editor Header */
+        .editor-header, .output-header {
+            background: #0f172a;
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title, .output-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-title i, .output-title i {
+            color: #60a5fa;
+        }
+
+        .editor-title h3, .output-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .file-name {
+            background: #475569;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Code Editor Area */
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #codeEditor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            border: none;
+            outline: none;
+            resize: none;
+        }
+
+        /* Output Area */
+        #output {
+            flex: 1;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+            color: #d1d5db;
+            background: #1e293b;
+        }
+
+        .output-placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Examples Dropdown */
+        .examples-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .examples-btn {
+            background: transparent;
+            border: 2px solid #f59e0b;
+            color: #f59e0b;
+        }
+
+        .examples-btn:hover {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: #1e293b;
+            min-width: 220px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #e2e8f0;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            border-bottom: 1px solid #334155;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background: #334155;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a i {
+            margin-right: 10px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .examples-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #475569;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .shortcuts {
+            display: flex;
+            gap: 15px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .editor-area {
+                flex-direction: column;
+            }
+            
+            .editor-container, .output-container {
+                height: 50vh;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+            
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-left {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* CodeMirror Customization */
+        .CodeMirror {
+            height: 100% !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .cm-s-dracula.CodeMirror {
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>QuickJava</h1>
+                    <p>Professional Java Compiler for College Labs</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-run" onclick="runCode()">
+                    <i class="fas fa-play-circle"></i>
+                    Run Code
+                </button>
+                <button class="btn btn-clear" onclick="clearCode()">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear
+                </button>
+                
+                <div class="examples-dropdown">
+                    <button class="btn btn-example">
+                        <i class="fas fa-code"></i>
+                        Examples
+                        <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="loadExample('basic')"><i class="fas fa-star"></i> Basic Hello World</a>
+                        <a href="#" onclick="loadExample('loops')"><i class="fas fa-redo"></i> Loops & Arrays</a>
+                        <a href="#" onclick="loadExample('calculator')"><i class="fas fa-calculator"></i> Calculator</a>
+                        <a href="#" onclick="loadExample('patterns')"><i class="fas fa-shapes"></i> Star Patterns</a>
+                        <a href="#" onclick="loadExample('college')"><i class="fas fa-graduation-cap"></i> College Practical</a>
+                    </div>
+                </div>
+                
+                <button class="btn btn-export" onclick="exportCode()">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Editor Area -->
+        <div class="editor-area">
+            <!-- Code Editor Section -->
+            <div class="editor-container">
+                <div class="editor-header">
+                    <div class="editor-title">
+                        <i class="fas fa-file-code"></i>
+                        <h3>Java Code Editor</h3>
+                        <span class="file-name">Main.java</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 12px; color: #94a3b8;">
+                            <i class="fas fa-code-branch"></i>
+                            Lines: <span id="lineCount">0</span>
+                        </span>
+                        <span style="font-size: 12px; color: #94a3b8;">
+                            <i class="fas fa-keyboard"></i>
+                            Ctrl+Enter to run
+                        </span>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <textarea id="codeEditor" spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-container">
+                <div class="output-header">
+                    <div class="output-title">
+                        <i class="fas fa-terminal"></i>
+                        <h3>Program Output</h3>
+                    </div>
+                    <button class="btn btn-clear" onclick="clearOutput()" style="padding: 8px 16px; font-size: 12px;">
+                        <i class="fas fa-eraser"></i>
+                        Clear Output
+                    </button>
+                </div>
+                <div id="output">
+                    <div class="output-placeholder">
+// 🚀 Welcome to QuickJava Compiler!
+// ==================================
+//
+// Features:
+// • Syntax highlighting
+// • Auto code completion
+// • Real-time error checking
+// • Multiple Java examples
+// • Export/Import functionality
+//
+// Click "Run Code" or press Ctrl+Enter to start
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-left">
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>Ready to compile</span>
+                </div>
+                <div class="shortcuts">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Enter</kbd> - Run
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Tab</kbd> - Indent
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>S</kbd> - Save
+                    </div>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #64748b;">
+                Made with ❤️ for College Labs • No Installation Required
+            </div>
+        </div>
+    </div>
+
+    <!-- File Import Input (Hidden) -->
+    <input type="file" id="fileInput" accept=".java,.txt" style="display: none;">
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/anyword-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
+    
+    <!-- Load Main JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
