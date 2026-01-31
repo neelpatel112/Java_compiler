@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ JavaLab - Real Online Java Compiler</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d1117;
+            color: #f0f6fc;
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-family: 'Fira Code', monospace;
+            font-size: 24px;
+            background: linear-gradient(90deg, #58a6ff, #1f6feb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: linear-gradient(135deg, #2ea043, #3fb950);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);
+        }
+
+        .btn-clear {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+        }
+
+        .btn-clear:hover {
+            background: #30363d;
+        }
+
+        .btn-example {
+            background: transparent;
+            color: #58a6ff;
+            border: 1px solid #58a6ff;
+        }
+
+        .btn-example:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+
+        /* Editor Section */
+        .editor-section {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            background: #161b22;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        .editor-header {
+            background: #0d1117;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-title h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .file-badge {
+            background: #21262d;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        /* Code Editor */
+        .code-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #codeEditor {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: #f0f6fc;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 20px;
+            resize: none;
+            outline: none;
+            tab-size: 4;
+        }
+
+        /* Output Section */
+        .output-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            background: #161b22;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        .output-header {
+            background: #0d1117;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .output-title h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Output Content */
+        #output {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+            color: #c9d1d9;
+            line-height: 1.6;
+        }
+
+        .output-placeholder {
+            color: #484f58;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 15px;
+            border-top: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #238636;
+            animation: pulse 2s infinite;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .shortcuts {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        kbd {
+            background: #21262d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #30363d;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .editor-section, .output-section {
+                height: 50vh;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>JavaLab</h1>
+                    <p>Real Java Compiler for College Labs</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-run" onclick="runCode()">
+                    <i class="fas fa-play"></i>
+                    Run Code
+                </button>
+                <button class="btn btn-clear" onclick="clearCode()">
+                    <i class="fas fa-trash"></i>
+                    Clear
+                </button>
+                <button class="btn btn-example" onclick="loadExample()">
+                    <i class="fas fa-code"></i>
+                    Example
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Editor -->
+            <div class="editor-section">
+                <div class="editor-header">
+                    <div class="editor-title">
+                        <i class="fas fa-file-code"></i>
+                        <h3>EDITOR</h3>
+                        <div class="file-badge">Main.java</div>
+                    </div>
+                    <div class="editor-info">
+                        <span style="font-size: 12px; color: #8b949e;">
+                            <i class="fas fa-code-branch"></i>
+                            Lines: <span id="lineCount">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <textarea id="codeEditor" spellcheck="false" placeholder="// Write your Java code here...
+// Press Ctrl+Enter to run
+// Make sure class name is 'Main'">public class Main {
+    public static void main(String[] args) {
+        System.out.println("🚀 Welcome to JavaLab!");
+        System.out.println("======================");
+        
+        // Test loops
+        System.out.println("\\nCounting 1 to 10:");
+        for(int i = 1; i <= 10; i++) {
+            System.out.print(i + " ");
+        }
+        
+        System.out.println("\\n\\nEven numbers till 20:");
+        for(int i = 1; i <= 20; i++) {
+            if(i % 2 == 0) {
+                System.out.print(i + " ");
+            }
+        }
+        
+        // Variables and calculations
+        System.out.println("\\n\\nBasic Calculations:");
+        int a = 25;
+        int b = 5;
+        System.out.println(a + " + " + b + " = " + (a + b));
+        System.out.println(a + " * " + b + " = " + (a * b));
+        
+        System.out.println("\\n✅ Code compiled successfully!");
+    }
+}</textarea>
+                </div>
+            </div>
+
+            <!-- Output -->
+            <div class="output-section">
+                <div class="output-header">
+                    <div class="output-title">
+                        <i class="fas fa-terminal"></i>
+                        <h3>OUTPUT</h3>
+                    </div>
+                    <button class="btn btn-clear" onclick="clearOutput()" style="padding: 6px 12px; font-size: 12px;">
+                        <i class="fas fa-eraser"></i>
+                        Clear
+                    </button>
+                </div>
+                <div id="output">
+                    <div class="output-placeholder">
+// ====================================
+// 🚀 JavaLab Online Compiler
+// ====================================
+//
+// Features:
+// • REAL Java compilation
+// • Full loop & condition support
+// • Works with any Java code
+// • Fast execution
+//
+// Write your code and click "Run Code"
+// ====================================
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="status">
+                <div class="status-indicator"></div>
+                <div class="status-text" id="statusText">Ready to compile</div>
+            </div>
+            <div class="shortcuts">
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>Enter</kbd> Run
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl</kbd> + <kbd>S</kbd> Save
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Tab</kbd> Indent
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

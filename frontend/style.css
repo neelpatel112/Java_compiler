@@ -1,0 +1,267 @@
+/* JavaLab - Online Java Compiler */
+/* Minimal CSS for clean interface */
+
+/* Code Editor Styling */
+.code-container {
+    position: relative;
+}
+
+.code-line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50px;
+    height: 100%;
+    background: #0d1117;
+    color: #484f58;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 20px 10px 20px 0;
+    text-align: right;
+    border-right: 1px solid #30363d;
+    overflow: hidden;
+    user-select: none;
+}
+
+#lineNumbers {
+    white-space: pre;
+}
+
+#codeEditor {
+    padding-left: 70px !important;
+}
+
+/* Output Console Styling */
+.output-console {
+    position: relative;
+    height: 100%;
+}
+
+.console-line {
+    display: flex;
+    margin-bottom: 4px;
+}
+
+.console-line-number {
+    color: #484f58;
+    min-width: 40px;
+    text-align: right;
+    padding-right: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    user-select: none;
+}
+
+.console-content {
+    flex: 1;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.console-content.error {
+    color: #f85149;
+}
+
+.console-content.success {
+    color: #3fb950;
+}
+
+.console-content.info {
+    color: #58a6ff;
+}
+
+.console-content.warning {
+    color: #d29922;
+}
+
+/* Loading Animation */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(13, 17, 23, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #30363d;
+    border-top: 4px solid #238636;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: #c9d1d9;
+    font-size: 14px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Auto-suggestion */
+.suggestion-box {
+    position: absolute;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #21262d;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #c9d1d9;
+}
+
+.suggestion-item:hover {
+    background: #1f6feb;
+    color: white;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-highlight {
+    color: #58a6ff;
+    font-weight: bold;
+}
+
+/* Status Colors */
+.status-compiling .status-indicator {
+    background: #d29922;
+    animation: pulse-fast 0.5s infinite;
+}
+
+.status-error .status-indicator {
+    background: #f85149;
+    animation: none;
+}
+
+.status-success .status-indicator {
+    background: #3fb950;
+    animation: none;
+}
+
+@keyframes pulse-fast {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .footer {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .shortcuts {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .controls, .footer {
+        display: none;
+    }
+    
+    .editor-section, .output-section {
+        border: none;
+        height: auto;
+    }
+    
+    #codeEditor {
+        background: white;
+        color: black;
+    }
+}
+
+/* Selection Color */
+::selection {
+    background: rgba(88, 166, 255, 0.3);
+    color: inherit;
+}
+
+/* Placeholder Color */
+#codeEditor::placeholder {
+    color: #484f58;
+}
+
+/* Focus States */
+.btn:focus, #codeEditor:focus {
+    outline: 2px solid #1f6feb;
+    outline-offset: 2px;
+}
+
+/* Disabled States */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Code Editor Enhancements */
+.code-keyword {
+    color: #ff7b72;
+}
+
+.code-string {
+    color: #a5d6ff;
+}
+
+.code-comment {
+    color: #8b949e;
+    font-style: italic;
+}
+
+.code-number {
+    color: #79c0ff;
+}
+
+.code-function {
+    color: #d2a8ff;
+} 
